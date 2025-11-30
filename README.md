@@ -2,6 +2,8 @@ En este espacio nos centramos en el trabajo de taller integracion y la codificac
 
 DB = POSTGRESQL
 
+**Consejo:** Genere el entorno virtual **dentro del directorio en el que se encuentre system** en su manejo de archivos, es decir, **no genere el entorno virtual dentro de system**, para un mayor orden.
+
 **Recuerde crear y utilizar el entorno virtual cada vez que avance en el proyecto, de no hacerlo, puede generar errores en el repositorio por falta de librerias, entre otros!**
 Seguido de esto, ademas cada vez que agregue librerias, agreguelo al archivo ya hecho "requeriments.txt" mediante el comando: "pip freeze > requeriments.txt"
 Nota: *Debe de encontrarse en la carpeta actual de requeriments.txt, de caso contrario, creara un nuevo archivo.*
