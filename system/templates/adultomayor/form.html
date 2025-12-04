@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if form.instance.pk %}Editar{% else %}Registrar{% endif %} Adulto Mayor{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-3 mb-4 border-bottom">
+    <h1 class="h2">
+        <i class="bi bi-{% if form.instance.pk %}pencil{% else %}person-plus{% endif %}-fill me-2"></i>
+        {% if form.instance.pk %}Editar{% else %}Registrar Nuevo{% endif %} Adulto Mayor
+    </h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'adultomayor_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>
+            Volver al Listado
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-card-list me-2"></i>
+                Información Personal
+            </div>
+            <div class="card-body">
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Datos Personales -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="id_nombre" class="form-label">
+                                <i class="bi bi-person me-1"></i>Nombre *
+                            </label>
+                            <input type="text" 
+                                   class="form-control {% if form.nombre.errors %}is-invalid{% endif %}" 
+                                   id="id_nombre" 
+                                   name="nombre" 
+                                   value="{{ form.nombre.value|default:'' }}"
+                                   required>
+                            {% if form.nombre.errors %}
+                                <div class="invalid-feedback">{{ form.nombre.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_apellido" class="form-label">
+                                <i class="bi bi-person me-1"></i>Apellido *
+                            </label>
+                            <input type="text" 
+                                   class="form-control {% if form.apellido.errors %}is-invalid{% endif %}" 
+                                   id="id_apellido" 
+                                   name="apellido" 
+                                   value="{{ form.apellido.value|default:'' }}"
+                                   required>
+                            {% if form.apellido.errors %}
+                                <div class="invalid-feedback">{{ form.apellido.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="id_rut" class="form-label">
+                                <i class="bi bi-card-text me-1"></i>RUT *
+                            </label>
+                            <input type="text" 
+                                   class="form-control {% if form.rut.errors %}is-invalid{% endif %}" 
+                                   id="id_rut" 
+                                   name="rut" 
+                                   value="{{ form.rut.value|default:'' }}"
+                                   placeholder="12.345.678-9"
+                                   required>
+                            {% if form.rut.errors %}
+                                <div class="invalid-feedback">{{ form.rut.errors.0 }}</div>
+                            {% endif %}
+                            <div class="form-text">Formato: 12.345.678-9</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_fecha_nacimiento" class="form-label">
+                                <i class="bi bi-calendar me-1"></i>Fecha de Nacimiento *
+                            </label>
+                            <input type="date" 
+                                   class="form-control {% if form.fecha_nacimiento.errors %}is-invalid{% endif %}" 
+                                   id="id_fecha_nacimiento" 
+                                   name="fecha_nacimiento" 
+                                   value="{{ form.fecha_nacimiento.value|date:'Y-m-d'|default:'' }}"
+                                   required>
+                            {% if form.fecha_nacimiento.errors %}
+                                <div class="invalid-feedback">{{ form.fecha_nacimiento.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Datos de Contacto -->
+                    <h5 class="mb-3 mt-4">
+                        <i class="bi bi-telephone me-2"></i>
+                        Datos de Contacto
+                    </h5>
+                    <hr>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="id_telefono" class="form-label">
+                                <i class="bi bi-phone me-1"></i>Teléfono
+                            </label>
+                            <input type="text" 
+                                   class="form-control {% if form.telefono.errors %}is-invalid{% endif %}" 
+                                   id="id_telefono" 
+                                   name="telefono" 
+                                   value="{{ form.telefono.value|default:'' }}"
+                                   placeholder="+56 9 1234 5678">
+                            {% if form.telefono.errors %}
+                                <div class="invalid-feedback">{{ form.telefono.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_email" class="form-label">
+                                <i class="bi bi-envelope me-1"></i>Email
+                            </label>
+                            <input type="email" 
+                                   class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                                   id="id_email" 
+                                   name="email" 
+                                   value="{{ form.email.value|default:'' }}"
+                                   placeholder="ejemplo@correo.com">
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback">{{ form.email.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="id_direccion" class="form-label">
+                            <i class="bi bi-geo-alt me-1"></i>Dirección
+                        </label>
+                        <input type="text" 
+                               class="form-control {% if form.direccion.errors %}is-invalid{% endif %}" 
+                               id="id_direccion" 
+                               name="direccion" 
+                               value="{{ form.direccion.value|default:'' }}"
+                               placeholder="Calle, número, comuna">
+                        {% if form.direccion.errors %}
+                            <div class="invalid-feedback">{{ form.direccion.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Contacto de Emergencia -->
+                    <h5 class="mb-3 mt-4">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Contacto de Emergencia
+                    </h5>
+                    <hr>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="id_contacto_emergencia" class="form-label">
+                                <i class="bi bi-person-lines-fill me-1"></i>Nombre Contacto
+                            </label>
+                            <input type="text" 
+                                   class="form-control {% if form.contacto_emergencia.errors %}is-invalid{% endif %}" 
+                                   id="id_contacto_emergencia" 
+                                   name="contacto_emergencia" 
+                                   value="{{ form.contacto_emergencia.value|default:'' }}">
+                            {% if form.contacto_emergencia.errors %}
+                                <div class="invalid-feedback">{{ form.contacto_emergencia.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_telefono_emergencia" class="form-label">
+                                <i class="bi bi-phone-vibrate me-1"></i>Teléfono Emergencia
+                            </label>
+                            <input type="text" 
+                                   class="form-control {% if form.telefono_emergencia.errors %}is-invalid{% endif %}" 
+                                   id="id_telefono_emergencia" 
+                                   name="telefono_emergencia" 
+                                   value="{{ form.telefono_emergencia.value|default:'' }}"
+                                   placeholder="+56 9 1234 5678">
+                            {% if form.telefono_emergencia.errors %}
+                                <div class="invalid-feedback">{{ form.telefono_emergencia.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Estado -->
+                    <div class="mb-4">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" 
+                                   type="checkbox" 
+                                   id="id_activo" 
+                                   name="activo"
+                                   {% if form.instance.pk and form.activo.value or not form.instance.pk %}checked{% endif %}>
+                            <label class="form-check-label" for="id_activo">
+                                <i class="bi bi-toggle-on me-1"></i>
+                                Estado Activo
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{% url 'adultomayor_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle me-2"></i>
+                            Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-2"></i>
+                            {% if form.instance.pk %}Guardar Cambios{% else %}Registrar{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Información Adicional -->
+        <div class="card mt-3 border-start border-info border-4">
+            <div class="card-body">
+                <h6 class="text-info">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    Información Importante
+                </h6>
+                <ul class="small text-muted mb-0">
+                    <li>Los campos marcados con * son obligatorios</li>
+                    <li>El RUT debe ser único en el sistema</li>
+                    <li>Es importante mantener actualizado el contacto de emergencia</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Validación de formulario Bootstrap
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+{% endblock %}

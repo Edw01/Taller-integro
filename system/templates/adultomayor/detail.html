@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle - {{ adulto.nombre }} {{ adulto.apellido }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-3 mb-4 border-bottom">
+    <h1 class="h2">
+        <i class="bi bi-person-badge me-2"></i>
+        Detalle del Adulto Mayor
+    </h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a href="{% url 'adultomayor_update' adulto.id %}" class="btn btn-warning">
+                <i class="bi bi-pencil me-2"></i>Editar
+            </a>
+            <a href="{% url 'adultomayor_delete' adulto.id %}" class="btn btn-danger">
+                <i class="bi bi-trash me-2"></i>Eliminar
+            </a>
+        </div>
+        <a href="{% url 'adultomayor_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Volver
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Información Principal -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-person-circle me-2"></i>
+                Información Personal
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="icon-shape icon-primary me-3" style="width: 60px; height: 60px; font-size: 2rem;">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div>
+                                <h3 class="mb-0">{{ adulto.nombre }} {{ adulto.apellido }}</h3>
+                                <span class="badge bg-info">{{ adulto.edad }} años</span>
+                                {% if adulto.activo %}
+                                    <span class="badge bg-success ms-2">
+                                        <i class="bi bi-check-circle me-1"></i>Activo
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary ms-2">Inactivo</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small">
+                            <i class="bi bi-card-text me-1"></i>RUT
+                        </label>
+                        <p class="mb-0 fw-bold">{{ adulto.rut }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small">
+                            <i class="bi bi-calendar me-1"></i>Fecha de Nacimiento
+                        </label>
+                        <p class="mb-0 fw-bold">{{ adulto.fecha_nacimiento|date:"d/m/Y" }}</p>
+                    </div>
+                </div>
+
+                <hr>
+
+                <h5 class="mb-3">
+                    <i class="bi bi-telephone me-2"></i>
+                    Información de Contacto
+                </h5>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small">
+                            <i class="bi bi-phone me-1"></i>Teléfono
+                        </label>
+                        <p class="mb-0 fw-bold">
+                            {% if adulto.telefono %}
+                                <a href="tel:{{ adulto.telefono }}" class="text-decoration-none">
+                                    {{ adulto.telefono }}
+                                </a>
+                            {% else %}
+                                <span class="text-muted">No registrado</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="text-muted small">
+                            <i class="bi bi-envelope me-1"></i>Email
+                        </label>
+                        <p class="mb-0 fw-bold">
+                            {% if adulto.email %}
+                                <a href="mailto:{{ adulto.email }}" class="text-decoration-none">
+                                    {{ adulto.email }}
+                                </a>
+                            {% else %}
+                                <span class="text-muted">No registrado</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="text-muted small">
+                        <i class="bi bi-geo-alt me-1"></i>Dirección
+                    </label>
+                    <p class="mb-0 fw-bold">
+                        {% if adulto.direccion %}
+                            {{ adulto.direccion }}
+                        {% else %}
+                            <span class="text-muted">No registrada</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contacto de Emergencia -->
+        <div class="card mt-4 border-start border-danger border-4">
+            <div class="card-body">
+                <h5 class="text-danger mb-3">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Contacto de Emergencia
+                </h5>
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <label class="text-muted small">
+                            <i class="bi bi-person-lines-fill me-1"></i>Nombre
+                        </label>
+                        <p class="mb-0 fw-bold">
+                            {% if adulto.contacto_emergencia %}
+                                {{ adulto.contacto_emergencia }}
+                            {% else %}
+                                <span class="text-muted">No registrado</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="text-muted small">
+                            <i class="bi bi-phone-vibrate me-1"></i>Teléfono
+                        </label>
+                        <p class="mb-0 fw-bold">
+                            {% if adulto.telefono_emergencia %}
+                                <a href="tel:{{ adulto.telefono_emergencia }}" class="text-decoration-none text-danger">
+                                    {{ adulto.telefono_emergencia }}
+                                </a>
+                            {% else %}
+                                <span class="text-muted">No registrado</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar con Info Adicional -->
+    <div class="col-lg-4">
+        <!-- Información del Registro -->
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <i class="bi bi-info-circle me-2"></i>
+                Información del Registro
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="text-muted small">Fecha de Registro</label>
+                    <p class="mb-0">
+                        <i class="bi bi-calendar-check me-1"></i>
+                        {{ adulto.fecha_registro|date:"d/m/Y H:i" }}
+                    </p>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small">ID de Registro</label>
+                    <p class="mb-0">
+                        <i class="bi bi-hash me-1"></i>
+                        {{ adulto.id }}
+                    </p>
+                </div>
+                <div>
+                    <label class="text-muted small">Estado</label>
+                    <p class="mb-0">
+                        {% if adulto.activo %}
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle me-1"></i>Activo
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary">
+                                <i class="bi bi-x-circle me-1"></i>Inactivo
+                            </span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Acciones Rápidas -->
+        <div class="card">
+            <div class="card-header bg-light">
+                <i class="bi bi-lightning-fill me-2"></i>
+                Acciones Rápidas
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-printer me-2"></i>Imprimir Ficha
+                    </button>
+                    <button class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-file-earmark-pdf me-2"></i>Exportar a PDF
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-calendar-event me-2"></i>Programar Actividad
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alerta de Recordatorio -->
+        <div class="alert alert-warning mt-4" role="alert">
+            <h6 class="alert-heading">
+                <i class="bi bi-bell-fill me-2"></i>Recordatorio
+            </h6>
+            <p class="small mb-0">
+                Recuerda mantener actualizada la información de contacto y emergencia del adulto mayor.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

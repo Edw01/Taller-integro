@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center text-white d-flex align-items-center justify-content-center"
+    style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://source.unsplash.com/1600x900/?community,help'); background-size: cover; height: 80vh;">
+    <div class="container">
+        <h1 class="display-3 fw-bold mb-4">Conectando Generaciones</h1>
+        <p class="lead mb-5">Una plataforma para unir voluntarios con adultos mayores que necesitan apoyo y compañía.
+        </p>
+        <a href="#" class="btn btn-primary btn-lg rounded-pill px-5 me-3">Quiero Ayudar</a>
+        <a href="#" class="btn btn-outline-light btn-lg rounded-pill px-5">Necesito Ayuda</a>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-lg hover-card">
+                    <div class="card-body p-5 text-center">
+                        <div class="icon-box mb-4 text-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor"
+                                class="bi bi-heart-fill" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                    d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
+                            </svg>
+                        </div>
+                        <h3 class="card-title fw-bold mb-3">Voluntariado</h3>
+                        <p class="card-text text-muted">Únete a nuestra comunidad de voluntarios y marca la diferencia
+                            en la vida de alguien. Ofrece tu tiempo, habilidades y compañía.</p>
+                        <a href="#" class="btn btn-outline-primary mt-3">Saber más</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-lg hover-card">
+                    <div class="card-body p-5 text-center">
+                        <div class="icon-box mb-4 text-success">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor"
+                                class="bi bi-people-fill" viewBox="0 0 16 16">
+                                <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                                <path fill-rule="evenodd"
+                                    d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z" />
+                                <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z" />
+                            </svg>
+                        </div>
+                        <h3 class="card-title fw-bold mb-3">Adulto Mayor</h3>
+                        <p class="card-text text-muted">Encuentra el apoyo que necesitas. Conecta con voluntarios
+                            confiables para acompañamiento, asistencia en tareas diarias y más.</p>
+                        <a href="#" class="btn btn-outline-success mt-3">Solicitar Ayuda</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

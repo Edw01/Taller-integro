@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmar Eliminación{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Confirmar Eliminación
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <i class="bi bi-trash display-1 text-danger"></i>
+                </div>
+                
+                <div class="alert alert-danger" role="alert">
+                    <h6 class="alert-heading">¿Estás seguro de eliminar este registro?</h6>
+                    <p class="mb-0">Esta acción no se puede deshacer.</p>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ adulto.nombre }} {{ adulto.apellido }}</h5>
+                        <p class="card-text">
+                            <strong>RUT:</strong> {{ adulto.rut }}<br>
+                            <strong>Edad:</strong> {{ adulto.edad }} años<br>
+                            <strong>Fecha de Registro:</strong> {{ adulto.fecha_registro|date:"d/m/Y" }}
+                        </p>
+                    </div>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="bi bi-trash-fill me-2"></i>
+                            Sí, Eliminar Definitivamente
+                        </button>
+                        <a href="{% url 'adultomayor_detail' adulto.id %}" class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-x-circle me-2"></i>
+                            No, Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

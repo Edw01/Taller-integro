@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}Listado de Adultos Mayores{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-3 mb-4 border-bottom">
+    <h1 class="h2">
+        <i class="bi bi-people-fill me-2"></i>
+        Adultos Mayores Registrados
+    </h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'adultomayor_create' %}" class="btn btn-primary">
+            <i class="bi bi-person-plus-fill me-2"></i>
+            Registrar Nuevo
+        </a>
+    </div>
+</div>
+
+<!-- Filtros y Búsqueda -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">
+                    <i class="bi bi-search me-1"></i>Buscar
+                </label>
+                <input type="text" name="search" class="form-control" placeholder="Nombre, apellido o RUT..." value="{{ request.GET.search }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">
+                    <i class="bi bi-filter me-1"></i>Estado
+                </label>
+                <select name="estado" class="form-select">
+                    <option value="">Todos</option>
+                    <option value="activo" {% if request.GET.estado == 'activo' %}selected{% endif %}>Activos</option>
+                    <option value="inactivo" {% if request.GET.estado == 'inactivo' %}selected{% endif %}>Inactivos</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">
+                    <i class="bi bi-sort-down me-1"></i>Ordenar por
+                </label>
+                <select name="order" class="form-select">
+                    <option value="apellido">Apellido</option>
+                    <option value="-fecha_registro" {% if request.GET.order == '-fecha_registro' %}selected{% endif %}>Más Recientes</option>
+                    <option value="fecha_registro" {% if request.GET.order == 'fecha_registro' %}selected{% endif %}>Más Antiguos</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-funnel-fill me-1"></i>Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tabla de Resultados -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>
+            <i class="bi bi-table me-2"></i>
+            Total: {{ adultos|length }} registro{{ adultos|length|pluralize }}
+        </span>
+        <div>
+            <button class="btn btn-sm btn-outline-light" data-bs-toggle="tooltip" title="Exportar a Excel">
+                <i class="bi bi-file-earmark-excel"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-light" data-bs-toggle="tooltip" title="Imprimir">
+                <i class="bi bi-printer"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        {% if adultos %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th width="5%">#</th>
+                            <th width="25%">Nombre Completo</th>
+                            <th width="12%">RUT</th>
+                            <th width="10%">Edad</th>
+                            <th width="15%">Teléfono</th>
+                            <th width="13%">Fecha Registro</th>
+                            <th width="10%">Estado</th>
+                            <th width="10%" class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for adulto in adultos %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-shape icon-primary me-2" style="width: 35px; height: 35px; font-size: 1rem;">
+                                        <i class="bi bi-person-fill"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">{{ adulto.nombre }} {{ adulto.apellido }}</div>
+                                        {% if adulto.email %}
+                                            <small class="text-muted">
+                                                <i class="bi bi-envelope me-1"></i>{{ adulto.email }}
+                                            </small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ adulto.rut }}</td>
+                            <td>
+                                <span class="badge bg-info">{{ adulto.edad }} años</span>
+                            </td>
+                            <td>
+                                {% if adulto.telefono %}
+                                    <i class="bi bi-telephone me-1"></i>{{ adulto.telefono }}
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <small>{{ adulto.fecha_registro|date:"d/m/Y H:i" }}</small>
+                            </td>
+                            <td>
+                                {% if adulto.activo %}
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle me-1"></i>Activo
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-x-circle me-1"></i>Inactivo
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <a href="{% url 'adultomayor_detail' adulto.id %}" 
+                                       class="btn btn-sm btn-outline-info" 
+                                       data-bs-toggle="tooltip" 
+                                       title="Ver Detalle">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="{% url 'adultomayor_update' adulto.id %}" 
+                                       class="btn btn-sm btn-outline-warning" 
+                                       data-bs-toggle="tooltip" 
+                                       title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a href="{% url 'adultomayor_delete' adulto.id %}" 
+                                       class="btn btn-sm btn-outline-danger" 
+                                       data-bs-toggle="tooltip" 
+                                       title="Eliminar">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-inbox display-1 text-muted"></i>
+                <h4 class="mt-3 text-muted">No se encontraron registros</h4>
+                <p class="text-muted">No hay adultos mayores registrados o no coinciden con los filtros.</p>
+                <a href="{% url 'adultomayor_create' %}" class="btn btn-primary mt-3">
+                    <i class="bi bi-person-plus-fill me-2"></i>
+                    Registrar Primero
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Activar tooltips de Bootstrap
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+</script>
+{% endblock %}
