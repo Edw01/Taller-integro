@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Iniciar Sesión - Adulto Mayor App{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-header card-header-custom">
+                <h3 class="card-title mb-0">Iniciar Sesión</h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Nombre de usuario</label>
+                        <input type="text" name="username" class="form-control" required id="id_username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">Contraseña</label>
+                        <input type="password" name="password" class="form-control" required id="id_password">
+                    </div>
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger small">
+                        Usuario o contraseña incorrectos.
+                    </div>
+                    {% endif %}
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-custom">Ingresar</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <small>¿No tienes cuenta? <a href="{% url 'register' %}">Regístrate aquí</a></small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
