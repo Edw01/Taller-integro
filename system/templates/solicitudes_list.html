@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}Solicitudes - Adulto Mayor{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>Solicitudes de Ayuda</h2>
+        <p class="text-muted">Solicitudes disponibles actualmente: <strong>{{ count_disponibles }}</strong></p>
+    </div>
+    <div class="col-md-4 text-end">
+        {% if user.profile.rol == 'PRESIDENTE' %}
+        <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#collapseForm"
+            aria-expanded="false" aria-controls="collapseForm">
+            + Nueva Solicitud
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Formulario para crear solicitud (Solo Presidentes) -->
+{% if user.profile.rol == 'PRESIDENTE' %}
+<div class="collapse mb-4" id="collapseForm">
+    <div class="card card-body">
+        <h4>Crear Nueva Solicitud</h4>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="crear_solicitud" value="1">
+            <div class="mb-3">
+                {{ form.titulo }}
+            </div>
+            <div class="mb-3">
+                {{ form.descripcion }}
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label">Presidentes</label>
+                    {{ form.cantidad_presidentes }}
+                </div>
+                <div class="col">
+                    <label class="form-label">Voluntarios</label>
+                    {{ form.cantidad_voluntarios }}
+                </div>
+                <div class="col">
+                    <label class="form-label">Beneficiarios</label>
+                    {{ form.cantidad_beneficiarios }}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Publicar Solicitud</button>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+<!-- Listado de Cards -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for solicitud in solicitudes %}
+    <div class="col">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-header bg-transparent border-bottom-0 pt-3">
+                <span
+                    class="badge {% if solicitud.estado == 'DISPONIBLE' %}bg-success{% elif solicitud.estado == 'ASIGNADA' %}bg-warning{% else %}bg-secondary{% endif %} float-end">
+                    {{ solicitud.get_estado_display }}
+                </span>
+                <small class="text-muted">{{ solicitud.created_at|date:"d M Y" }}</small>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ solicitud.titulo }}</h5>
+                <p class="card-text text-secondary">{{ solicitud.descripcion|truncatechars:100 }}</p>
+
+                <hr>
+                <div class="small mb-2">
+                    <strong>Presidente:</strong> {{ solicitud.presidente.first_name }} {{ solicitud.presidente.last_name }}
+                    <br>
+                    <strong>Voluntarios ({{ solicitud.voluntarios.count }}/{{ solicitud.cantidad_voluntarios }}):</strong>
+                    {% for vol in solicitud.voluntarios.all %}
+                    <span class="badge bg-warning text-dark">{{ vol.first_name }}</span>
+                    {% empty %}
+                    <span class="text-muted fst-italic">Pendiente</span>
+                    {% endfor %}
+                    <br>
+                    <strong>Solicitantes ({{ solicitud.adultos_mayores.count }}/{{ solicitud.cantidad_beneficiarios }}):</strong>
+                    {% for am in solicitud.adultos_mayores.all %}
+                    <span class="badge bg-primary">{{ am.first_name }}</span>
+                    {% empty %}
+                    <span class="text-muted fst-italic">Pendiente</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-top-0 pb-3">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="solicitud_id" value="{{ solicitud.id }}">
+
+                    {% if user.profile.rol == 'VOLUNTARIO' %}
+                    {% if user in solicitud.voluntarios.all %}
+                    <div class="alert alert-warning py-1 text-center mb-0">Eres voluntario aquí</div>
+                    {% elif solicitud.voluntarios.count < solicitud.cantidad_voluntarios %} <button type="submit"
+                        name="ser_voluntario" class="btn btn-warning w-100 text-dark fw-bold">
+                        ¡Quiero ser Voluntario!
+                        </button>
+                        {% else %}
+                        <button class="btn btn-secondary w-100" disabled>Cupos llenos</button>
+                        {% endif %}
+                        {% elif user.profile.rol == 'ADULTO_MAYOR' %}
+                        {% if user in solicitud.adultos_mayores.all %}
+                        <div class="alert alert-primary py-1 text-center mb-0">Solicitaste esta ayuda</div>
+                        {% elif solicitud.adultos_mayores.count < solicitud.cantidad_beneficiarios %} <button
+                            type="submit" name="solicitar_ayuda" class="btn btn-primary w-100">
+                            Solicitar esta Ayuda
+                            </button>
+                            {% else %}
+                            <button class="btn btn-secondary w-100" disabled>Cupos llenos</button>
+                            {% endif %}
+                            {% else %}
+                            <button class="btn btn-outline-secondary w-100" disabled>Ver Detalles</button>
+                            {% endif %}
+
+                            {% if user == solicitud.presidente %}
+                            <div class="mt-2 d-flex gap-2">
+                                {% if solicitud.estado != 'FINALIZADA' %}
+                                <button type="submit" name="finalizar_solicitud"
+                                    class="btn btn-success flex-grow-1 btn-sm">
+                                    Finalizar
+                                </button>
+                                {% endif %}
+                                <button type="submit" name="eliminar_solicitud"
+                                    class="btn btn-danger flex-grow-1 btn-sm"
+                                    onclick="return confirm('¿Estás seguro de eliminar esta solicitud?');">
+                                    Eliminar
+                                </button>
+                            </div>
+                            {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12 text-center py-5">
+        <p class="text-muted fs-5">No hay solicitudes registradas aún.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

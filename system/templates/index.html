@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - Adulto Mayor App{% endblock %}
+
+{% block content %}
+<div class="p-5 mb-4 bg-light rounded-3 shadow-sm text-center">
+    <div class="container-fluid py-5">
+        <h1 class="display-5 fw-bold">Bienvenido a la Red de Ayuda</h1>
+        <p class="col-md-8 fs-4 mx-auto">Conectamos a Presidentes de Junta, Voluntarios y Adultos Mayores para construir
+            una comunidad más solidaria.</p>
+
+        {% if not user.is_authenticated %}
+        <div class="mt-4">
+            <a class="btn btn-primary btn-lg px-4 gap-3" href="{% url 'register' %}">Registrarse</a>
+            <a class="btn btn-outline-secondary btn-lg px-4" href="{% url 'login' %}">Iniciar Sesión</a>
+        </div>
+        {% else %}
+        <div class="mt-4">
+            <a class="btn btn-custom btn-lg px-4" href="{% url 'solicitudes_list' %}">Ver Solicitudes</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row align-items-md-stretch">
+    <div class="col-md-4">
+        <div class="h-100 p-5 text-white bg-dark rounded-3">
+            <h2>Presidentes de Junta</h2>
+            <p>Gestionen las necesidades de su comunidad creando solicitudes de ayuda específicas.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="h-100 p-5 bg-warning text-dark rounded-3">
+            <h2>Voluntarios</h2>
+            <p>Ofrezcan su tiempo y habilidades para ayudar a quienes más lo necesitan.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="h-100 p-5 bg-primary text-white rounded-3">
+            <h2>Adultos Mayores</h2>
+            <p>Reciban la ayuda que necesitan de manera segura y coordinada.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
