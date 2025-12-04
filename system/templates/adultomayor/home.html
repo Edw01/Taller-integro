@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - VoluntariadoMayor{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">🤝 VoluntariadoMayor</h1>
+        <p class="hero-subtitle">
+            Conectando juntas de vecinos con estudiantes voluntarios 
+            para ayudar a adultos mayores de nuestra comunidad
+        </p>
+        
+        {% if not user.is_authenticated %}
+        <div class="hero-actions">
+            <a href="{% url 'admin:login' %}" class="btn btn-primary btn-lg">
+                <span class="icon">🔐</span> Iniciar Sesión
+            </a>
+            <a href="{% url 'adultomayor:solicitud_list' %}" class="btn btn-secondary btn-lg">
+                <span class="icon">📋</span> Ver Solicitudes
+            </a>
+        </div>
+        {% else %}
+        <div class="hero-actions">
+            <a href="{% url 'adultomayor:dashboard' %}" class="btn btn-primary btn-lg">
+                <span class="icon">📊</span> Mi Dashboard
+            </a>
+            <a href="{% url 'adultomayor:solicitud_list' %}" class="btn btn-secondary btn-lg">
+                <span class="icon">📋</span> Ver Solicitudes
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Estadísticas -->
+<section class="stats-section">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">📋</div>
+            <div class="stat-number">{{ total_solicitudes }}</div>
+            <div class="stat-label">Solicitudes Activas</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">🤝</div>
+            <div class="stat-number">{{ total_voluntarios }}</div>
+            <div class="stat-label">Voluntarios Registrados</div>
+        </div>
+    </div>
+</section>
+
+<!-- Solicitudes Recientes -->
+{% if solicitudes_recientes %}
+<section class="recent-section">
+    <h2 class="section-title">📌 Solicitudes Recientes</h2>
+    
+    <div class="solicitudes-grid">
+        {% for solicitud in solicitudes_recientes %}
+        <article class="solicitud-card">
+            <div class="card-header">
+                <div class="card-id">
+                    <span class="icon">📌</span> #{{ solicitud.id }}
+                </div>
+                <span class="badge badge-estado badge-{{ solicitud.estado|lower }}">
+                    {{ solicitud.get_estado_display }}
+                </span>
+            </div>
+            
+            <div class="card-body">
+                <h3 class="card-title">
+                    <a href="{% url 'adultomayor:solicitud_detail' solicitud.pk %}" class="card-link">
+                        {{ solicitud.titulo }}
+                    </a>
+                </h3>
+                
+                <p class="card-description">
+                    {{ solicitud.descripcion|truncatewords:15 }}
+                </p>
+                
+                <div class="card-info">
+                    <div class="info-item">
+                        <span class="info-icon">👤</span>
+                        <span class="info-value">{{ solicitud.adulto_mayor.nombre_completo }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <a href="{% url 'adultomayor:solicitud_detail' solicitud.pk %}" class="btn btn-view">
+                    <span class="icon">👁️</span> Ver Detalle
+                </a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    
+    <div class="text-center" style="margin-top: 30px;">
+        <a href="{% url 'adultomayor:solicitud_list' %}" class="btn btn-primary">
+            Ver Todas las Solicitudes
+        </a>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 20px;
+        border-radius: 15px;
+        margin-bottom: 40px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        color: white;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.3rem;
+        margin-bottom: 30px;
+        opacity: 0.95;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .hero-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .btn-lg {
+        padding: 15px 30px;
+        font-size: 1.1rem;
+    }
+    
+    .stats-section {
+        margin-bottom: 50px;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+    }
+    
+    .stat-card {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .stat-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 10px;
+    }
+    
+    .stat-label {
+        color: #666;
+        font-size: 1.1rem;
+    }
+    
+    .recent-section {
+        margin-top: 50px;
+    }
+    
+    .section-title {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #667eea;
+    }
+</style>
+{% endblock %}
