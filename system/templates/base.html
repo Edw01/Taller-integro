@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Sistema de Voluntariado para Adultos Mayores - Conectando juntas de vecinos con estudiantes voluntarios">
+    <meta name="author" content="VoluntariadoMayor">
+    
+    <title>{% block title %}VoluntariadoMayor{% endblock %}</title>
+    
+    <!-- CSS Externo -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    
+    <!-- Bloque para CSS adicional específico de cada página -->
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- ========================================================================
+         HEADER - Navegación Principal
+         ======================================================================== -->
+    <header class="main-header">
+        <nav class="navbar">
+            <div class="container">
+                <!-- Logo y Nombre del Sitio -->
+                <div class="navbar-brand">
+                    <a href="{% url 'adultomayor:home' %}" class="brand-link">
+                        <span class="logo">🤝</span>
+                        <span class="brand-name">VoluntariadoMayor</span>
+                    </a>
+                </div>
+                
+                <!-- Menú de Navegación -->
+                <ul class="navbar-menu">
+                    <li class="nav-item">
+                        <a href="{% url 'adultomayor:home' %}" class="nav-link">
+                            <span class="icon">🏠</span> Inicio
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a href="{% url 'adultomayor:solicitud_list' %}" class="nav-link">
+                            <span class="icon">📋</span> Solicitudes
+                        </a>
+                    </li>
+                    
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a href="{% url 'adultomayor:dashboard' %}" class="nav-link">
+                                <span class="icon">📊</span> Dashboard
+                            </a>
+                        </li>
+                        
+                        <!-- Botón visible solo para Solicitantes -->
+                        {% if user.es_solicitante %}
+                        <li class="nav-item">
+                            <a href="{% url 'adultomayor:solicitud_create' %}" class="nav-link btn-create">
+                                <span class="icon">➕</span> Nueva Solicitud
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        <!-- Enlace al Reporte SQL -->
+                        <li class="nav-item">
+                            <a href="{% url 'adultomayor:reporte_gestion' %}" class="nav-link">
+                                <span class="icon">📊</span> Reporte SQL
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+                
+                <!-- Usuario y Autenticación -->
+                <div class="navbar-user">
+                    {% if user.is_authenticated %}
+                        <div class="user-info">
+                            <span class="user-greeting">Hola, <strong>{{ user.get_full_name|default:user.username }}</strong></span>
+                            
+                            <!-- Badge del Rol -->
+                            {% if user.es_solicitante %}
+                                <span class="badge badge-solicitante">Solicitante</span>
+                            {% elif user.es_voluntario %}
+                                <span class="badge badge-voluntario">Voluntario</span>
+                            {% endif %}
+                        </div>
+                        
+                        <a href="{% url 'admin:logout' %}" class="btn btn-logout">
+                            <span class="icon">🚪</span> Cerrar Sesión
+                        </a>
+                    {% else %}
+                        <a href="{% url 'admin:login' %}" class="btn btn-login">
+                            <span class="icon">🔐</span> Iniciar Sesión
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <!-- ========================================================================
+         MAIN CONTENT - Contenido Principal
+         ======================================================================== -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Mensajes del Sistema (Django Messages Framework) -->
+            {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <span class="alert-icon">
+                        {% if message.tags == 'success' %}✓
+                        {% elif message.tags == 'error' %}✗
+                        {% elif message.tags == 'warning' %}⚠
+                        {% else %}ℹ{% endif %}
+                    </span>
+                    <span class="alert-text">{{ message }}</span>
+                    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Breadcrumb (Migas de Pan) - Opcional -->
+            {% block breadcrumb %}{% endblock %}
+            
+            <!-- Título de la Página -->
+            {% block page_header %}
+            <div class="page-header">
+                <h1 class="page-title">{% block page_title %}VoluntariadoMayor{% endblock %}</h1>
+                {% block page_subtitle %}{% endblock %}
+            </div>
+            {% endblock %}
+            
+            <!-- Contenido Específico de Cada Página -->
+            {% block content %}
+            <!-- El contenido se inyectará aquí desde los templates hijos -->
+            {% endblock %}
+        </div>
+    </main>
+    
+    <!-- ========================================================================
+         FOOTER - Pie de Página
+         ======================================================================== -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>VoluntariadoMayor</h3>
+                    <p>Conectando juntas de vecinos con estudiantes voluntarios para ayudar a adultos mayores.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Enlaces Rápidos</h4>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'adultomayor:home' %}">Inicio</a></li>
+                        <li><a href="{% url 'adultomayor:solicitud_list' %}">Solicitudes</a></li>
+                        {% if user.is_authenticated %}
+                        <li><a href="{% url 'adultomayor:dashboard' %}">Dashboard</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Información</h4>
+                    <ul class="footer-links">
+                        <li>Proyecto Académico</li>
+                        <li>Django {{ request.META.SERVER_SOFTWARE|default:"5.2" }}</li>
+                        <li>PostgreSQL</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 VoluntariadoMayor. Sistema de Gestión de Voluntariado.</p>
+                <p>Desarrollado con Django + PostgreSQL</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript para interactividad básica -->
+    <script>
+        // Auto-cerrar alertas después de 5 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 300);
+                }, 5000);
+            });
+        });
+        
+        // Toggle menú móvil (si se implementa responsive)
+        function toggleMobileMenu() {
+            const menu = document.querySelector('.navbar-menu');
+            menu.classList.toggle('active');
+        }
+    </script>
+    
+    <!-- Bloque para JavaScript adicional específico de cada página -->
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

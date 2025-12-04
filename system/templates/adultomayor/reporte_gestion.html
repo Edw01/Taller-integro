@@ -1,0 +1,431 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo_reporte }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .metadata {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .metadata h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .metadata p {
+            margin: 8px 0;
+            color: #555;
+        }
+        
+        .metadata strong {
+            color: #333;
+        }
+        
+        .clausulas-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .clausula-item {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            border-left: 3px solid #28a745;
+            font-size: 0.9em;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+        }
+        
+        .section-title {
+            background: #667eea;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card .number {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        thead {
+            background: #667eea;
+            color: white;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        tbody tr:hover {
+            background: #f8f9fa;
+            transition: background 0.3s;
+        }
+        
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .badge-asignada { background: #007bff; }
+        .badge-pendiente { background: #ffc107; color: #333; }
+        .badge-finalizada { background: #28a745; }
+        .badge-urgente { background: #dc3545; }
+        .badge-alta { background: #fd7e14; }
+        .badge-media { background: #ffc107; color: #333; }
+        .badge-baja { background: #28a745; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .empty-state i {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .sql-note {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        
+        .sql-note h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .sql-note p {
+            color: #856404;
+            line-height: 1.8;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>📊 {{ titulo_reporte }}</h1>
+            <p class="subtitle">Generado el {{ fecha_generacion|date:"d/m/Y H:i:s" }}</p>
+        </div>
+
+        <!-- METADATA TÉCNICA -->
+        <div class="metadata">
+            <h3>🔧 Información Técnica del Reporte</h3>
+            <p><strong>Método de Consulta:</strong> {{ metodo_consulta }}</p>
+            <p><strong>Base de Datos:</strong> PostgreSQL</p>
+            <p><strong>ORM Utilizado:</strong> NO - SQL Puro (Raw SQL)</p>
+            
+            <p style="margin-top: 15px;"><strong>Cláusulas SQL Implementadas:</strong></p>
+            <div class="clausulas-list">
+                {% for clausula in clausulas_sql_usadas %}
+                <div class="clausula-item">✓ {{ clausula }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- ESTADÍSTICAS GENERALES -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="number">{{ total_asignadas }}</div>
+                <div class="label">Solicitudes Asignadas</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">{{ total_voluntarios }}</div>
+                <div class="label">Voluntarios Activos</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">{{ estadisticas_postulaciones|length }}</div>
+                <div class="label">Con Postulaciones</div>
+            </div>
+        </div>
+
+        <!-- NOTA SOBRE SQL PURO -->
+        <div class="sql-note">
+            <h4>⚠️ IMPORTANTE - Evaluación de Base de Datos</h4>
+            <p>
+                Este reporte fue generado utilizando <strong>SQL PURO (Raw SQL)</strong> mediante 
+                <code>connection.cursor()</code> y <code>Model.objects.raw()</code>, 
+                <strong>NO el ORM de Django</strong>. Las consultas incluyen explícitamente: 
+                <strong>JOIN</strong> para unir tablas, <strong>WHERE</strong> para filtrar, 
+                <strong>ORDER BY</strong> para ordenar, y selección específica de columnas. 
+                Consulte el código fuente en <code>views.py → reporte_gestion_sql()</code> 
+                para ver los comentarios detallados de cada parte de la sentencia SQL.
+            </p>
+        </div>
+
+        <!-- SECCIÓN 1: SOLICITUDES ASIGNADAS -->
+        <div class="section">
+            <h2 class="section-title">🎯 Solicitudes Asignadas (Consulta con INNER JOIN)</h2>
+            
+            {% if solicitudes_asignadas %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Tipo Ayuda</th>
+                        <th>Prioridad</th>
+                        <th>Solicitante</th>
+                        <th>Voluntario</th>
+                        <th>Beneficiario</th>
+                        <th>Fecha Asignación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sol in solicitudes_asignadas %}
+                    <tr>
+                        <td><strong>#{{ sol.solicitud_id }}</strong></td>
+                        <td>{{ sol.solicitud_titulo|truncatewords:8 }}</td>
+                        <td>{{ sol.tipo_ayuda }}</td>
+                        <td>
+                            <span class="badge badge-{{ sol.prioridad|lower }}">
+                                {{ sol.prioridad }}
+                            </span>
+                        </td>
+                        <td>
+                            {{ sol.creador_nombre }} {{ sol.creador_apellido }}<br>
+                            <small style="color: #666;">{{ sol.creador_username }}</small>
+                        </td>
+                        <td>
+                            {{ sol.voluntario_nombre }} {{ sol.voluntario_apellido }}<br>
+                            <small style="color: #666;">{{ sol.voluntario_username }}</small>
+                        </td>
+                        <td>
+                            {{ sol.adulto_mayor_nombres }} {{ sol.adulto_mayor_apellidos }}<br>
+                            <small style="color: #666;">RUT: {{ sol.adulto_mayor_rut }}</small>
+                        </td>
+                        <td>{{ sol.fecha_asignacion|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <p>📭 No hay solicitudes asignadas en este momento.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- SECCIÓN 2: ESTADÍSTICAS DE POSTULACIONES -->
+        <div class="section">
+            <h2 class="section-title">📈 Estadísticas de Postulaciones (Consulta con GROUP BY)</h2>
+            
+            {% if estadisticas_postulaciones %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título Solicitud</th>
+                        <th>Estado</th>
+                        <th>Total Postulaciones</th>
+                        <th>Pendientes</th>
+                        <th>Aceptadas</th>
+                        <th>Rechazadas</th>
+                        <th>Fecha Creación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for est in estadisticas_postulaciones %}
+                    <tr>
+                        <td><strong>#{{ est.id }}</strong></td>
+                        <td>{{ est.titulo|truncatewords:10 }}</td>
+                        <td>
+                            <span class="badge badge-{{ est.estado|lower }}">
+                                {{ est.get_estado_display }}
+                            </span>
+                        </td>
+                        <td><strong>{{ est.total_postulaciones }}</strong></td>
+                        <td>{{ est.postulaciones_pendientes }}</td>
+                        <td>{{ est.postulaciones_aceptadas }}</td>
+                        <td>{{ est.postulaciones_rechazadas }}</td>
+                        <td>{{ est.fecha_creacion|date:"d/m/Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <p>📭 No hay estadísticas de postulaciones disponibles.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- SECCIÓN 3: RANKING DE VOLUNTARIOS -->
+        <div class="section">
+            <h2 class="section-title">🏆 Ranking de Voluntarios Activos (Múltiples JOINs y Agregación)</h2>
+            
+            {% if voluntarios_activos %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Posición</th>
+                        <th>Voluntario</th>
+                        <th>Email</th>
+                        <th>Total Postulaciones</th>
+                        <th>Solicitudes Asignadas</th>
+                        <th>Completadas ✓</th>
+                        <th>Última Actividad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vol in voluntarios_activos %}
+                    <tr>
+                        <td>
+                            <strong style="font-size: 1.2em; color: #667eea;">
+                                #{{ forloop.counter }}
+                            </strong>
+                        </td>
+                        <td>
+                            <strong>{{ vol.first_name }} {{ vol.last_name }}</strong><br>
+                            <small style="color: #666;">@{{ vol.username }}</small>
+                        </td>
+                        <td>{{ vol.email }}</td>
+                        <td>{{ vol.total_postulaciones }}</td>
+                        <td>{{ vol.solicitudes_asignadas }}</td>
+                        <td>
+                            <strong style="color: #28a745; font-size: 1.1em;">
+                                {{ vol.solicitudes_completadas }}
+                            </strong>
+                        </td>
+                        <td>{{ vol.ultima_postulacion|date:"d/m/Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <p>📭 No hay voluntarios activos registrados.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- FOOTER -->
+        <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #e0e0e0; color: #666;">
+            <p><strong>VoluntariadoMayor</strong> - Sistema de Gestión de Voluntariado</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">
+                Reporte generado con SQL Puro para evaluación de Base de Datos
+            </p>
+        </div>
+    </div>
+</body>
+</html>

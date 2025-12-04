@@ -1,0 +1,379 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Solicitudes - VoluntariadoMayor{% endblock %}
+
+{% block page_title %}
+    📋 Solicitudes de Ayuda
+{% endblock %}
+
+{% block page_subtitle %}
+    <p class="page-description">
+        {% if user.is_authenticated %}
+            {% if user.es_voluntario %}
+                Explora las solicitudes disponibles y postula para ayudar a adultos mayores de tu comunidad.
+            {% elif user.es_solicitante %}
+                Gestiona tus solicitudes de ayuda para los adultos mayores de tu sector.
+            {% endif %}
+        {% else %}
+            Conoce las oportunidades de voluntariado disponibles en tu comunidad.
+        {% endif %}
+    </p>
+{% endblock %}
+
+{% block content %}
+<!-- ========================================================================
+     SECCIÓN DE FILTROS Y BÚSQUEDA
+     ======================================================================== -->
+<section class="filters-section">
+    <div class="filters-container">
+        <form method="get" action="{% url 'adultomayor:solicitud_list' %}" class="filters-form">
+            <!-- Búsqueda por texto -->
+            <div class="filter-group">
+                <label for="search" class="filter-label">
+                    <span class="icon">🔍</span> Buscar:
+                </label>
+                <input 
+                    type="text" 
+                    id="search" 
+                    name="search" 
+                    class="filter-input"
+                    placeholder="Buscar por título, descripción o tipo de ayuda..."
+                    value="{{ search_query }}"
+                >
+            </div>
+            
+            <!-- Filtro por prioridad -->
+            <div class="filter-group">
+                <label for="prioridad" class="filter-label">
+                    <span class="icon">⚡</span> Prioridad:
+                </label>
+                <select id="prioridad" name="prioridad" class="filter-select">
+                    <option value="">Todas</option>
+                    <option value="URGENTE" {% if prioridad_filter == 'URGENTE' %}selected{% endif %}>Urgente</option>
+                    <option value="ALTA" {% if prioridad_filter == 'ALTA' %}selected{% endif %}>Alta</option>
+                    <option value="MEDIA" {% if prioridad_filter == 'MEDIA' %}selected{% endif %}>Media</option>
+                    <option value="BAJA" {% if prioridad_filter == 'BAJA' %}selected{% endif %}>Baja</option>
+                </select>
+            </div>
+            
+            <!-- Botones de acción -->
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">
+                    <span class="icon">🔍</span> Filtrar
+                </button>
+                <a href="{% url 'adultomayor:solicitud_list' %}" class="btn btn-secondary">
+                    <span class="icon">🔄</span> Limpiar
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- ========================================================================
+     CONTADOR DE RESULTADOS
+     ======================================================================== -->
+<div class="results-info">
+    <p class="results-count">
+        <strong>{{ solicitudes|length }}</strong> 
+        solicitud{{ solicitudes|length|pluralize:"es" }} encontrada{{ solicitudes|length|pluralize }}
+        
+        {% if search_query %}
+            para "<em>{{ search_query }}</em>"
+        {% endif %}
+    </p>
+</div>
+
+<!-- ========================================================================
+     LISTA DE SOLICITUDES
+     Uso de {% for %} para iterar y {% if %} para condicionales
+     ======================================================================== -->
+<section class="solicitudes-grid">
+    {% if solicitudes %}
+        {% for solicitud in solicitudes %}
+        <!-- ====================================================================
+             CARD DE SOLICITUD
+             ==================================================================== -->
+        <article class="solicitud-card">
+            <!-- Header del Card con ID y Estado -->
+            <div class="card-header">
+                <div class="card-id">
+                    <span class="icon">📌</span> #{{ solicitud.id }}
+                </div>
+                
+                <!-- Badge de Estado con color dinámico -->
+                <span class="badge badge-estado badge-{{ solicitud.estado|lower }}">
+                    {{ solicitud.get_estado_display }}
+                </span>
+                
+                <!-- Badge de Prioridad -->
+                <span class="badge badge-prioridad badge-{{ solicitud.prioridad|lower }}">
+                    {{ solicitud.get_prioridad_display }}
+                </span>
+            </div>
+            
+            <!-- Cuerpo del Card -->
+            <div class="card-body">
+                <!-- Título de la Solicitud -->
+                <h3 class="card-title">
+                    <a href="{% url 'adultomayor:solicitud_detail' solicitud.pk %}" class="card-link">
+                        {{ solicitud.titulo }}
+                    </a>
+                </h3>
+                
+                <!-- Descripción truncada -->
+                <p class="card-description">
+                    {{ solicitud.descripcion|truncatewords:20 }}
+                </p>
+                
+                <!-- Información del Beneficiario -->
+                <div class="card-info">
+                    <div class="info-item">
+                        <span class="info-icon">👤</span>
+                        <span class="info-label">Beneficiario:</span>
+                        <span class="info-value">{{ solicitud.adulto_mayor.nombre_completo }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-icon">🏷️</span>
+                        <span class="info-label">Tipo de Ayuda:</span>
+                        <span class="info-value">{{ solicitud.tipo_ayuda }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-icon">📅</span>
+                        <span class="info-label">Creada:</span>
+                        <span class="info-value">{{ solicitud.fecha_creacion|date:"d/m/Y" }}</span>
+                    </div>
+                    
+                    <!-- Mostrar fecha límite si existe -->
+                    {% if solicitud.fecha_limite %}
+                    <div class="info-item">
+                        <span class="info-icon">⏰</span>
+                        <span class="info-label">Fecha Límite:</span>
+                        <span class="info-value">{{ solicitud.fecha_limite|date:"d/m/Y" }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Información del Creador (visible para voluntarios) -->
+                    {% if user.is_authenticated and user.es_voluntario %}
+                    <div class="info-item">
+                        <span class="info-icon">📝</span>
+                        <span class="info-label">Solicitante:</span>
+                        <span class="info-value">{{ solicitud.creador.get_full_name }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Mostrar voluntario asignado si existe -->
+                    {% if solicitud.voluntario_asignado %}
+                    <div class="info-item">
+                        <span class="info-icon">🤝</span>
+                        <span class="info-label">Voluntario:</span>
+                        <span class="info-value">{{ solicitud.voluntario_asignado.get_full_name }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Contador de postulaciones (solo para solicitantes) -->
+                    {% if user.is_authenticated and user == solicitud.creador %}
+                    <div class="info-item">
+                        <span class="info-icon">📊</span>
+                        <span class="info-label">Postulaciones:</span>
+                        <span class="info-value">{{ solicitud.num_postulaciones|default:0 }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Footer del Card con Botones de Acción -->
+            <div class="card-footer">
+                <!-- Botón VER DETALLE (siempre visible) -->
+                <a href="{% url 'adultomayor:solicitud_detail' solicitud.pk %}" class="btn btn-view">
+                    <span class="icon">👁️</span> Ver Detalle
+                </a>
+                
+                <!-- ============================================================
+                     CONDICIONAL: Botones según ROL del usuario
+                     ============================================================ -->
+                
+                {% if user.is_authenticated %}
+                    <!-- BOTONES PARA VOLUNTARIOS -->
+                    {% if user.es_voluntario %}
+                        <!-- Solo mostrar botón Postular si la solicitud está PENDIENTE -->
+                        {% if solicitud.estado == 'PENDIENTE' %}
+                            <a href="{% url 'adultomayor:postular_solicitud' solicitud.pk %}" 
+                               class="btn btn-postular">
+                                <span class="icon">✋</span> Postular
+                            </a>
+                        {% elif solicitud.voluntario_asignado == user %}
+                            <!-- Si el voluntario ya está asignado a esta solicitud -->
+                            <span class="badge badge-info">
+                                ✓ Asignado a ti
+                            </span>
+                        {% endif %}
+                    
+                    <!-- BOTONES PARA SOLICITANTES (Creador de la solicitud) -->
+                    {% elif user.es_solicitante and user == solicitud.creador %}
+                        <!-- Botón Editar (solo si está PENDIENTE) -->
+                        {% if solicitud.estado == 'PENDIENTE' %}
+                            <a href="{% url 'adultomayor:solicitud_update' solicitud.pk %}" 
+                               class="btn btn-edit">
+                                <span class="icon">✏️</span> Editar
+                            </a>
+                        {% endif %}
+                        
+                        <!-- Botón Finalizar (solo si está ASIGNADA) -->
+                        {% if solicitud.estado == 'ASIGNADA' %}
+                            <a href="{% url 'adultomayor:solicitud_finalizar' solicitud.pk %}" 
+                               class="btn btn-success">
+                                <span class="icon">✓</span> Finalizar
+                            </a>
+                        {% endif %}
+                        
+                        <!-- Botón Eliminar (solo si está PENDIENTE) -->
+                        {% if solicitud.estado == 'PENDIENTE' %}
+                            <a href="{% url 'adultomayor:solicitud_delete' solicitud.pk %}" 
+                               class="btn btn-delete"
+                               onclick="return confirm('¿Está seguro de eliminar esta solicitud?')">
+                                <span class="icon">🗑️</span> Eliminar
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    <!-- USUARIO NO AUTENTICADO -->
+                    <a href="{% url 'admin:login' %}" class="btn btn-login-prompt">
+                        <span class="icon">🔐</span> Inicia sesión para postular
+                    </a>
+                {% endif %}
+            </div>
+        </article>
+        {% endfor %}
+    
+    {% else %}
+        <!-- ====================================================================
+             ESTADO VACÍO - No hay solicitudes
+             ==================================================================== -->
+        <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <h2 class="empty-title">No hay solicitudes disponibles</h2>
+            <p class="empty-message">
+                {% if user.is_authenticated %}
+                    {% if user.es_solicitante %}
+                        Aún no has creado ninguna solicitud. 
+                        <a href="{% url 'adultomayor:solicitud_create' %}" class="link-primary">
+                            Crea tu primera solicitud aquí
+                        </a>
+                    {% elif user.es_voluntario %}
+                        No hay solicitudes pendientes en este momento. 
+                        Vuelve pronto para ver nuevas oportunidades de voluntariado.
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'admin:login' %}" class="link-primary">
+                        Inicia sesión
+                    </a> para ver las solicitudes disponibles.
+                {% endif %}
+            </p>
+        </div>
+    {% endif %}
+</section>
+
+<!-- ========================================================================
+     PAGINACIÓN (si está habilitada)
+     ======================================================================== -->
+{% if is_paginated %}
+<nav class="pagination-container">
+    <ul class="pagination">
+        <!-- Botón Anterior -->
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if prioridad_filter %}&prioridad={{ prioridad_filter }}{% endif %}" 
+                   class="page-link">
+                    « Primera
+                </a>
+            </li>
+            <li class="page-item">
+                <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if prioridad_filter %}&prioridad={{ prioridad_filter }}{% endif %}" 
+                   class="page-link">
+                    ‹ Anterior
+                </a>
+            </li>
+        {% endif %}
+        
+        <!-- Número de Página Actual -->
+        <li class="page-item active">
+            <span class="page-link">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+        </li>
+        
+        <!-- Botón Siguiente -->
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if prioridad_filter %}&prioridad={{ prioridad_filter }}{% endif %}" 
+                   class="page-link">
+                    Siguiente ›
+                </a>
+            </li>
+            <li class="page-item">
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if prioridad_filter %}&prioridad={{ prioridad_filter }}{% endif %}" 
+                   class="page-link">
+                    Última »
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+<!-- Botón flotante para crear solicitud (solo solicitantes) -->
+{% if user.is_authenticated and user.es_solicitante %}
+<div class="fab-container">
+    <a href="{% url 'adultomayor:solicitud_create' %}" 
+       class="fab" 
+       title="Crear nueva solicitud">
+        <span class="fab-icon">➕</span>
+    </a>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Estilos adicionales específicos para la lista de solicitudes */
+    .solicitudes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+    }
+    
+    .fab-container {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 1000;
+    }
+    
+    .fab {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 50%;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        text-decoration: none;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .fab:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+    
+    .fab-icon {
+        font-size: 24px;
+    }
+</style>
+{% endblock %}
