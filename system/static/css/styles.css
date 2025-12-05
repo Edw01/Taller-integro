@@ -1,0 +1,94 @@
+/* Default colors (Gray/Dark) */
+:root {
+    --main-color: #343a40;
+    --text-color: white;
+    --btn-hover: #23272b;
+}
+
+/* Role: Adulto Mayor (Yellow) */
+body.role-adulto_mayor {
+    --main-color: #fdc300;
+    --text-color: black;
+    --btn-hover: #e0ac00;
+}
+
+/* Role: Voluntario (Blue) */
+body.role-voluntario {
+    --main-color: #0077ba;
+    --text-color: white;
+    --btn-hover: #005fa3;
+}
+
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar-custom {
+    background-color: var(--main-color) !important;
+    padding: 1rem 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.5s ease;
+}
+
+.navbar-custom .navbar-brand {
+    font-size: 1.5rem;
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-custom .navbar-brand,
+.navbar-custom .nav-link,
+.navbar-custom .navbar-text {
+    color: var(--text-color) !important;
+}
+
+.card-header-custom {
+    background-color: var(--main-color);
+    color: var(--text-color);
+}
+
+.btn-custom {
+    background-color: var(--main-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 50px;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-custom:hover {
+    background-color: var(--btn-hover);
+    color: var(--text-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Navbar Buttons */
+.navbar-custom .btn {
+    border-radius: 50px;
+    padding: 0.4rem 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.navbar-custom .btn:hover {
+    transform: translateY(-1px);
+}
+
+/* Custom Utilities from index.html */
+.card-hover {
+    transition: transform 0.3s;
+}
+
+.card-hover:hover {
+    transform: scale(1.03);
+}
+
+.icon-square-custom {
+    width: 50px;
+    height: 50px;
+}
+
+.logo-wide {
+    width: auto;
+    max-width: 150px;
+}
