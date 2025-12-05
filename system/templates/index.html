@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio - AllyUCT{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="px-4 py-5 my-5 text-center bg-white rounded-3 shadow-lg border-bottom border-primary border-5">
+    <div class="container py-4">
+        <h1 class="display-4 fw-bold text-primary mb-3">Bienvenido a la Red de Ayuda</h1>
+        <div class="col-lg-8 mx-auto">
+            <p class="lead mb-4 text-muted">Conectamos a Presidentes de Junta, Voluntarios y Adultos Mayores para
+                construir una comunidad más solidaria, activa y segura para todos.</p>
+
+            {% if not user.is_authenticated %}
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a class="btn btn-primary btn-lg px-4 gap-3 shadow-sm" href="{% url 'register' %}">Registrarse</a>
+                <a class="btn btn-outline-secondary btn-lg px-4 shadow-sm" href="{% url 'login' %}">Iniciar Sesión</a>
+            </div>
+            {% else %}
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <a class="btn btn-custom btn-lg px-5 shadow-sm" href="{% url 'solicitudes_list' %}">
+                    <i class="bi bi-list-check me-2"></i>Ver Solicitudes
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Role Cards Section -->
+<div class="container px-4 py-5" id="roles">
+    <h2 class="pb-2 border-bottom text-center mb-5 text-secondary">Nuestros Pilares</h2>
+    <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-2">
+
+        <div class="col">
+            <div class="card card-cover h-100 overflow-hidden text-white bg-dark rounded-4 shadow-lg border-0 card-hover">
+                <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">
+                    <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Presidentes de Junta</h3>
+                    <p class="lead">Gestionen las necesidades de su comunidad creando solicitudes de ayuda específicas.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card card-cover h-100 overflow-hidden text-dark bg-warning rounded-4 shadow-lg border-0 card-hover">
+                <div class="d-flex flex-column h-100 p-5 pb-3 text-shadow-1">
+                    <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Voluntarios</h3>
+                    <p class="lead">Ofrezcan su tiempo y habilidades para ayudar a quienes más lo necesitan.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card card-cover h-100 overflow-hidden text-white bg-primary rounded-4 shadow-lg border-0 card-hover">
+                <div class="d-flex flex-column h-100 p-5 pb-3 text-shadow-1">
+                    <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold">Adultos Mayores</h3>
+                    <p class="lead">Reciban la ayuda que necesitan de manera segura y coordinada.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- About / Mission Section -->
+<div class="container col-xxl-8 px-4 py-5">
+    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+        <div class="col-lg-6">
+            <div class="p-5 bg-light rounded-3 border shadow-sm">
+                <!-- Placeholder for an image if needed, using text for now -->
+                <div class="text-center py-5 text-muted">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor"
+                        class="bi bi-heart-fill text-danger mb-3" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
+                    </svg>
+                    <h4>Compromiso Social</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <h2 class="display-5 fw-bold lh-1 mb-3 text-dark">Nuestra Misión</h2>
+            <p class="lead text-muted">Buscamos a gente que pueda ayudar gratuitamente a adultos mayores en sus quehaceres, consiguiendo una sonrisa de parte de ellos.</p>
+            <p class="text-muted">Dia a dia miles de adultos mayores no tienen manera de realizar ciertas acciones para su vida diaria, pintar una cerca, limpiar su auto, cortar su cesped, entre otros, llevandolos a situaciones desfavorables pero facilmente reversibles.</p>
+        </div>
+    </div>
+</div>
+
+<!-- How it Works Section -->
+<div class="bg-light py-5">
+    <div class="container px-4 py-5" id="how-it-works">
+        <h2 class="pb-2 border-bottom text-center mb-5">¿Cómo Funciona?</h2>
+        <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+            <div class="col d-flex align-items-start">
+                <div class="icon-square bg-primary text-white d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3 rounded-3 icon-square-custom">
+                    1
+                </div>
+                <div>
+                    <h3 class="fs-2">Registro</h3>
+                    <p>Para comenzar en este viaje de empatia, debes de registrarte junto tu rut, nombre y apellido, y una contraseña para tu seguridad, ademas recuerda elegir la opcion adecuada que te define si buscas ser voluntario, o si requieres de ayuda un solicitante.
+                    </p>
+                </div>
+            </div>
+            <div class="col d-flex align-items-start">
+                <div class="icon-square bg-primary text-white d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3 rounded-3 icon-square-custom">
+                    2
+                </div>
+                <div>
+                    <h3 class="fs-2">Conexión</h3>
+                    <p>Una vez registrado, se iniciara sesion automaticamente y tendras disponible la opcion de solicitudes, donde encontraras distintas maneras para ayudar, sin embargo, recuerda cerrar sesion correctamente para evitar robos.</p>
+                </div>
+            </div>
+            <div class="col d-flex align-items-start">
+                <div class="icon-square bg-primary text-white d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3 rounded-3 icon-square-custom">
+                    3
+                </div>
+                <div>
+                    <h3 class="fs-2">Ayuda</h3>
+                    <p>Una vez en la seccion de solicitudes, podras encontrar multiples maneras de ayudar e incluso podras ver quienes se encuentran en esa solicitud especifica, tanto el presidente de junta que la estara organizando, como los voluntarios y adultos mayores en aquella peticion.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container px-4 py-5" id="features">
+    <h2 class="pb-2 border-bottom">Características del Servicio</h2>
+    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+        <div class="col">
+            <div class="h-100 p-4 bg-white rounded-3 shadow-sm border">
+                <h4 class="mb-3">Seguridad</h4>
+                <p>Utilizamos el rut para conocer a profundidad nuestros voluntarios, solicitantes y presidentes de junta, ademas siempre contamos con seguridad extra para asegurar un mejor servicio.</p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="h-100 p-4 bg-white rounded-3 shadow-sm border">
+                <h4 class="mb-3">Comunidad</h4>
+                <p>Este desafio empatico, mas que un desafio para mejorar como persona, tambien lo es para mejorar como sociedad y comunidad.</p>
+            </div>
+        </div>
+        <div class="col">
+            <div class="h-100 p-4 bg-white rounded-3 shadow-sm border">
+                <h4 class="mb-3">Rapidez</h4>
+                <p>Registrate, inicia sesion y comienza a ayudar, o tambien, tener la posibilidad de ser ayudado!</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

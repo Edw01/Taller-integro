@@ -17,3 +17,6 @@ Nota: *Debe de encontrarse en la carpeta actual de requeriments.txt, de caso con
 5. Crear archivo `.env` dentro del directorio /system con tus credenciales para la base de datos. La estructura es por ejemplo: DB_NAME=miproyectodb (salto de linea) DB_USER=tuusuario (salto de linea) DB_PASSWORD=tucontra
 6. Para correr migraciones: `python manage.py migrate`
 7. Para correr el servidor: `python manage.py runserver`
+8. **(Opcional) Cargar datos de prueba:** Para poblar la base de datos con usuarios y solicitudes de ejemplo, ejecute: `python manage.py populate_data`
+   - Usuarios creados: `presi`, `vol1`, `vol2`, `abuelo1`.
+   - Contraseña para todos: `pass1234`.
